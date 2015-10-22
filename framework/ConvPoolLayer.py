@@ -1,4 +1,9 @@
 from theano.tensor.nnet import sigmoid
+from theano.tensor.signal import downsample
+from theano.tensor.nnet import conv
+
+import theano
+import numpy
 
 class ConvPoolLayer(object):
     """Used to create a combination of a convolutional and a max-pooling
@@ -27,15 +32,15 @@ class ConvPoolLayer(object):
         self.poolsize = poolsize
         self.activation_fn=activation_fn
         # initialize weights and biases
-        n_out = (filter_shape[0]*np.prod(filter_shape[2:])/np.prod(poolsize))
+        n_out = (filter_shape[0]*numpy.prod(filter_shape[2:])/numpy.prod(poolsize))
         self.w = theano.shared(
-            np.asarray(
-                np.random.normal(loc=0, scale=np.sqrt(1.0/n_out), size=filter_shape),
+            numpy.asarray(
+                numpy.random.normal(loc=0, scale=numpy.sqrt(1.0/n_out), size=filter_shape),
                 dtype=theano.config.floatX),
             borrow=True)
         self.b = theano.shared(
-            np.asarray(
-                np.random.normal(loc=0, scale=1.0, size=(filter_shape[0],)),
+            numpy.asarray(
+                numpy.random.normal(loc=0, scale=1.0, size=(filter_shape[0],)),
                 dtype=theano.config.floatX),
             borrow=True)
         self.params = [self.w, self.b]

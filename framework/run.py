@@ -3,6 +3,7 @@ import ConvPoolLayer
 import HiddenLayer
 import SoftmaxLayer
 from DataLoader import loadData
+import time
 
 def enableGpu(flag):
     try: theano.config.device = 'gpu'
@@ -26,13 +27,21 @@ if __name__ == '__main__':
 
     training_data, validation_data, test_data = loadData()
     mini_batch_size = 10
-
-    net = Network([
-            FullyConnectedLayer(n_in=65536, n_out=10000),
-            FullyConnectedLayer(n_in=10000, n_out=1000),
-            SoftmaxLayer(n_in=1000, n_out=500),
-            FullyConnectedLayer(n_in=500, n_out=8)],
-            mini_batch_size)
-
-    net.train(training_data, 60, mini_batch_size, 0.1,
-                validation_data, test_data)
+    print "... sleeping"
+    time.sleep(180)    # pause 5.5 seconds
+    #
+    # net = Network([
+    #         ConvPoolLayer(image_shape=(mini_batch_size, 1, 512, 512),
+    #                   filter_shape=(20, 1, 5, 5),
+    #                   poolsize=(4, 4)),
+    #         # output is (512 - 5 + 1) / 4 = 127
+    #         ConvPoolLayer(image_shape=(mini_batch_size, 20, 127, 127),
+    #                   filter_shape=(40, 20, 4, 4),
+    #                   poolsize=(2, 2)),
+    #         # output is (127 - 4 + 1) / 2 = 62
+    #         FullyConnectedLayer(n_in=62*62, n_out=100),
+    #         SoftmaxLayer(n_in=100, n_out=8),
+    #         mini_batch_size)
+    #
+    # net.train(training_data, 60, mini_batch_size, 0.1,
+    #             validation_data, test_data)
