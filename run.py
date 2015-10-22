@@ -3,10 +3,9 @@ from framework.ConvPoolLayer import ConvPoolLayer
 from framework.FullyConnectedLayer import FullyConnectedLayer
 from framework.SoftmaxLayer import SoftmaxLayer
 from framework.DataLoader import loadData
+import theano
 
-import time
 import sys
-import gc
 
 def enableGpu(flag):
     try: theano.config.device = 'gpu'
@@ -44,7 +43,6 @@ if __name__ == '__main__':
 
     training_data, validation_data, test_data = loadData(data)
     mini_batch_size = 10
-    gc.collect()
 
     print "... setting up the network"
 
@@ -63,7 +61,6 @@ if __name__ == '__main__':
             mini_batch_size)
 
     print "... starting network training"
-    gc.collect()
 
     net.train(training_data, 60, mini_batch_size, 0.1,
                 validation_data, test_data)

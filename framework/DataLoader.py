@@ -56,26 +56,21 @@ def loadData(path="../data/images/", dataSplit = [1,0.1,0.1]):
     data = numpy.empty([0,2], dtype=theano.config.floatX)
     for index,file in enumerate(glob.glob(path+"*.jpg")):
         image = skimage.io.imread(file)
-        # print str(image.nbytes / (1024.0 * 1024.0)) + " MB"
-        gray = 0.2989 * image[:,:,0] + 0.5870 * image[:,:,1] + 0.1140 * image[:,:,2]
-        gray = gray.astype(numpy.uint8)
-        # print str(gray.nbytes / (1024.0 * 1024.0)) + " MB"
-        data = numpy.vstack((data, [gray.flatten().tolist(), get_index(file)]))
-        # print index
+        data = numpy.vstack((data, [image.flatten(), get_index(file)]))
 
     gc.collect()
     if len(data) == 0:
         raise Exception("There is problem loading the data from " + path)
 
-    numpy.random.shuffle(data);
+    data = numpy.transpose(data)
+    numpy.random.shuffle(data)
+    data = numpy.transpose(data)
 
-    B=numpy.random.randint(data.shape[0],size=int(data.shape[0]*dataSplit[0]))
-    training_data = shared(data[B,:])
-    B=numpy.random.randint(data.shape[0],size=int(data.shape[0]*dataSplit[1]))
-    validation_data = shared(data[B,:])
-    B=numpy.random.randint(data.shape[0],size=int(data.shape[0]*dataSplit[1]))
-    test_data = shared(data[B,:])
+    training_data = data
+    validation_data = data[0:data.shape[0]/10,:]
+    test_data = data = data[data.shape[0]/10:2*data.shape[0]/10,:]
+    print "(debug) Number of training images: " + str(training_data.shape[0])
+    print "(debug) Number of validation images: " + str(validation_data.shape[0])
+    print "(debug) Number of test images: " + str(test_data.shape[0])
 
-    print "... successfully loaded " + str(data.shape[0]) + " images"
-
-    return [training_data, validation_data, test_data]
+    return [shared(training_data), shared(validation_data), shared(test_data)]

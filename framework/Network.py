@@ -87,7 +87,7 @@ class Network(object):
         for epoch in xrange(epochs):
             for minibatch_index in xrange(num_training_batches):
                 iteration = num_training_batches*epoch+minibatch_index
-                print("... training mini-batch number {0}".format(iteration))
+                # print("... training mini-batch number {0}".format(iteration))
                 cost_ij = train_mb(minibatch_index)
                 if (iteration+1) % num_training_batches == 0:
                     print "... starting validation"
