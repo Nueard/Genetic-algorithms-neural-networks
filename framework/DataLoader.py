@@ -62,9 +62,9 @@ def loadData(path="../data/images/", dataSplit = [1,0.1,0.1]):
     if len(data) == 0:
         raise Exception("There is problem loading the data from " + path)
 
-    data = numpy.transpose(data)
-    numpy.random.shuffle(data)
-    data = numpy.transpose(data)
+    data = numpy.transpose(data.tolist())
+    numpy.random.shuffle(data.tolist())
+    data = numpy.transpose(data.tolist())
 
     training_data = data
     validation_data = data[0:data.shape[0]/10,:]

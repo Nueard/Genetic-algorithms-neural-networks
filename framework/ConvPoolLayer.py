@@ -4,6 +4,7 @@ from theano.tensor.nnet import conv
 
 import theano
 import numpy
+import skimage
 
 class ConvPoolLayer(object):
     """Used to create a combination of a convolutional and a max-pooling
@@ -38,6 +39,7 @@ class ConvPoolLayer(object):
                 numpy.random.normal(loc=0, scale=numpy.sqrt(1.0/n_out), size=filter_shape),
                 dtype=theano.config.floatX),
             borrow=True)
+
         self.b = theano.shared(
             numpy.asarray(
                 numpy.random.normal(loc=0, scale=1.0, size=(filter_shape[0],)),
@@ -55,3 +57,9 @@ class ConvPoolLayer(object):
         self.output = self.activation_fn(
             pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
         self.output_dropout = self.output # no dropout in the convolutional layers
+
+    def display_weights(self):
+        print self.w.shape
+        data = numpy.reshape(self.w.flatten(), self.filter_shape[0])
+        print data.shape
+        skimage.io.imsave("flower_inv.png", self.w.reshape(numpy.multiply(self.filter_shape[1:])))

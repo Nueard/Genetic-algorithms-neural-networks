@@ -1,0 +1,188 @@
+(debug) Number of training images: 2688
+(debug) Number of validation images: 268
+(debug) Number of test images: 269
+... setting up the network
+... starting network training
+... starting validation
+... epoch 0: validation accuracy 26.15%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 25.77%
+... starting validation
+... epoch 1: validation accuracy 28.08%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 30.00%
+... starting validation
+... epoch 2: validation accuracy 33.08%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 33.46%
+... starting validation
+... epoch 3: validation accuracy 31.54%
+... starting validation
+... epoch 4: validation accuracy 39.62%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 40.77%
+... starting validation
+... epoch 5: validation accuracy 41.54%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 41.15%
+... starting validation
+... epoch 6: validation accuracy 37.69%
+... starting validation
+... epoch 7: validation accuracy 42.69%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 46.15%
+... starting validation
+... epoch 8: validation accuracy 42.31%
+... starting validation
+... epoch 9: validation accuracy 44.62%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 48.46%
+... starting validation
+... epoch 10: validation accuracy 43.85%
+... starting validation
+... epoch 11: validation accuracy 41.92%
+... starting validation
+... epoch 12: validation accuracy 45.00%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 48.46%
+... starting validation
+... epoch 13: validation accuracy 46.15%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 48.46%
+... starting validation
+... epoch 14: validation accuracy 46.15%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 45.00%
+... starting validation
+... epoch 15: validation accuracy 48.85%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 50.38%
+... starting validation
+... epoch 16: validation accuracy 48.46%
+... starting validation
+... epoch 17: validation accuracy 50.38%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 50.77%
+... starting validation
+... epoch 18: validation accuracy 49.23%
+... starting validation
+... epoch 19: validation accuracy 51.15%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 50.77%
+... starting validation
+... epoch 20: validation accuracy 49.62%
+... starting validation
+... epoch 21: validation accuracy 53.46%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 52.31%
+... starting validation
+... epoch 22: validation accuracy 55.00%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 52.69%
+... starting validation
+... epoch 23: validation accuracy 55.38%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 53.85%
+... starting validation
+... epoch 24: validation accuracy 56.54%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 56.92%
+... starting validation
+... epoch 25: validation accuracy 51.92%
+... starting validation
+... epoch 26: validation accuracy 61.15%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 58.08%
+... starting validation
+... epoch 27: validation accuracy 60.77%
+... starting validation
+... epoch 28: validation accuracy 57.69%
+... starting validation
+... epoch 29: validation accuracy 59.62%
+... starting validation
+... epoch 30: validation accuracy 55.38%
+... starting validation
+... epoch 31: validation accuracy 56.15%
+... starting validation
+... epoch 32: validation accuracy 57.31%
+... starting validation
+... epoch 33: validation accuracy 62.31%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 60.00%
+... starting validation
+... epoch 34: validation accuracy 63.46%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 63.46%
+... starting validation
+... epoch 35: validation accuracy 61.92%
+... starting validation
+... epoch 36: validation accuracy 64.23%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 64.62%
+... starting validation
+... epoch 37: validation accuracy 65.00%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 61.92%
+... starting validation
+... epoch 38: validation accuracy 68.85%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 63.85%
+... starting validation
+... epoch 39: validation accuracy 66.92%
+... starting validation
+... epoch 40: validation accuracy 67.69%
+... starting validation
+... epoch 41: validation accuracy 73.08%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 72.31%
+... starting validation
+... epoch 42: validation accuracy 70.00%
+... starting validation
+... epoch 43: validation accuracy 73.08%
+... starting validation
+... epoch 44: validation accuracy 78.46%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 75.38%
+... starting validation
+... epoch 45: validation accuracy 76.15%
+... starting validation
+... epoch 46: validation accuracy 80.00%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 77.31%
+... starting validation
+... epoch 47: validation accuracy 77.31%
+... starting validation
+... epoch 48: validation accuracy 82.31%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 79.23%
+... starting validation
+... epoch 49: validation accuracy 80.77%
+... starting validation
+... epoch 50: validation accuracy 86.54%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 84.62%
+... starting validation
+... epoch 51: validation accuracy 73.85%
+... starting validation
+... epoch 52: validation accuracy 85.77%
+... starting validation
+... epoch 53: validation accuracy 84.62%
+... starting validation
+... epoch 54: validation accuracy 84.62%
+... starting validation
+... epoch 55: validation accuracy 87.69%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 81.54%
+... starting validation
+... epoch 56: validation accuracy 87.31%
+... starting validation
+... epoch 57: validation accuracy 93.46%
+... this is the best validation accuracy to date.
+... the corresponding test accuracy is 91.15%
+... starting validation
+... epoch 58: validation accuracy 80.38%
+... starting validation
+... epoch 59: validation accuracy 81.15%
+... finished training network.
+... best validation accuracy of 93.46% obtained at iteration 15543
+... corresponding test accuracy of 91.15%

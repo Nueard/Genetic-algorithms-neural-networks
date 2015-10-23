@@ -48,19 +48,21 @@ if __name__ == '__main__':
 
     net = Network([
             ConvPoolLayer(image_shape=(mini_batch_size, 3, 256, 256),
-                      filter_shape=(20, 3, 5, 5),
+                      filter_shape=(30, 3, 5, 5),
                       poolsize=(4, 4)),
             # output ( 256 - 5 + 1 ) / 4 = 63
-            ConvPoolLayer(image_shape=(mini_batch_size, 20, 63, 63),
-                      filter_shape=(40, 20, 4, 4),
+            ConvPoolLayer(image_shape=(mini_batch_size, 30, 63, 63),
+                      filter_shape=(50, 30, 4, 4),
                       poolsize=(4, 4)),
             # output ( 63 - 4 + 1 ) / 4 = 15
-            FullyConnectedLayer(n_in=40*15*15, n_out=1000),
+            FullyConnectedLayer(n_in=50*15*15, n_out=1000),
             FullyConnectedLayer(n_in=1000, n_out=100),
             SoftmaxLayer(n_in=100, n_out=8)],
             mini_batch_size)
 
     print "... starting network training"
 
-    net.train(training_data, 60, mini_batch_size, 0.1,
+    net.train(training_data, 2, mini_batch_size, 0.1,
                 validation_data, test_data)
+
+    # net.display_weights()
