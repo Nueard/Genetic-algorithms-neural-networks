@@ -56,14 +56,14 @@ if __name__ == '__main__':
 
     net = Network([
                 ConvPoolLayer(image_shape=(mini_batch_size, 3, 256, 256),
-                          filter_shape=(50, 3, 5, 5),
+                          filter_shape=(50, 3, 7, 7),
+                          poolsize=(5, 5)),
+                # output ( 256 - 7 + 1 ) / 5 = 50
+                ConvPoolLayer(image_shape=(mini_batch_size, 50, 50, 50),
+                          filter_shape=(30, 50, 3, 3),
                           poolsize=(4, 4)),
-                # output ( 256 - 5 + 1 ) / 4 = 63
-                ConvPoolLayer(image_shape=(mini_batch_size, 50, 63, 63),
-                          filter_shape=(30, 50, 4, 4),
-                          poolsize=(4, 4)),
-                # output ( 63 - 4 + 1 ) / 4 = 15
-                FullyConnectedLayer(n_in=30*15*15, n_out=1000, p_dropout=0.2),
+                # output ( 50 - 3 + 1 ) / 4 = 12
+                FullyConnectedLayer(n_in=30*12*12, n_out=1000, p_dropout=0.2),
                 FullyConnectedLayer(n_in=1000, n_out=100, p_dropout=0.2),
                 SoftmaxLayer(n_in=100, n_out=8, p_dropout=0.2)],
                 mini_batch_size)
