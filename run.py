@@ -3,11 +3,17 @@ from framework.ConvPoolLayer import ConvPoolLayer
 from framework.FullyConnectedLayer import FullyConnectedLayer
 from framework.SoftmaxLayer import SoftmaxLayer
 from framework.DataLoader import loadData
+import theano.tensor as T
+
+def ReLU(z): return T.maximum(0.0, z)
+
 import theano
 
 import sys
+import numpy
+import time
 
-def enableGpu(flag):
+def enableGpu(flag=None):
     try: theano.config.device = 'gpu'
     except: pass # it's already set
     theano.config.floatX = 'float32'
@@ -28,41 +34,50 @@ def test(type):
         data = "data/images/"
 
 args = {
-    "-gpu" : enableGpu,
     "-test" : test,
     "-shorttest" : test,
     "-realdata" : test
 }
 
 if __name__ == '__main__':
+    numpy.random.seed(0)
     for arg in sys.argv:
         if arg in args:
             args[arg](arg)
         elif arg.find('-') == 0:
             unsupportedFlag(arg)
 
-    training_data, validation_data, test_data = loadData(data)
-    mini_batch_size = 10
+    enableGpu()
 
     print "... setting up the network"
 
+    mini_batch_size = 10
+
+
     net = Network([
-            ConvPoolLayer(image_shape=(mini_batch_size, 3, 256, 256),
-                      filter_shape=(30, 3, 5, 5),
-                      poolsize=(4, 4)),
-            # output ( 256 - 5 + 1 ) / 4 = 63
-            ConvPoolLayer(image_shape=(mini_batch_size, 30, 63, 63),
-                      filter_shape=(50, 30, 4, 4),
-                      poolsize=(4, 4)),
-            # output ( 63 - 4 + 1 ) / 4 = 15
-            FullyConnectedLayer(n_in=50*15*15, n_out=1000),
-            FullyConnectedLayer(n_in=1000, n_out=100),
-            SoftmaxLayer(n_in=100, n_out=8)],
-            mini_batch_size)
+                ConvPoolLayer(image_shape=(mini_batch_size, 3, 256, 256),
+                          filter_shape=(50, 3, 5, 5),
+                          poolsize=(4, 4)),
+                # output ( 256 - 5 + 1 ) / 4 = 63
+                ConvPoolLayer(image_shape=(mini_batch_size, 50, 63, 63),
+                          filter_shape=(30, 50, 4, 4),
+                          poolsize=(4, 4)),
+                # output ( 63 - 4 + 1 ) / 4 = 15
+                FullyConnectedLayer(n_in=30*15*15, n_out=1000, p_dropout=0.2),
+                FullyConnectedLayer(n_in=1000, n_out=100, p_dropout=0.2),
+                SoftmaxLayer(n_in=100, n_out=8, p_dropout=0.2)],
+                mini_batch_size)
+
+    print "... loading data"
+
+    training_data, validation_data, test_data = loadData()
 
     print "... starting network training"
-
-    net.train(training_data, 2, mini_batch_size, 0.1,
+    start = time.time()
+    net.train(training_data, 400, mini_batch_size, 0.01,
                 validation_data, test_data)
+
+    end = time.time()
+    print "Training time elapsed: " + str(end - start) + " s"
 
     # net.display_weights()

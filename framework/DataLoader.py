@@ -6,6 +6,8 @@ import theano.tensor as T
 
 import sys
 import gc
+import cPickle
+import gzip
 
 """ Returns the index (0 .. len(categories)) of the image by trying to find a
 category in the filename, or -1 if not found
@@ -35,12 +37,12 @@ category_of_image_n = return[n,1]
 :param dataSplit: Array of floats 0..1 which represents fractions for training,
 validation and test data. Example:
 [0.9,0.05,0.05]
-training data is 90% of loaded data
-validation data is 5% of loaded data
-test data is 5% of loaded data
+training data is 60% of loaded data
+validation data is 20% of loaded data
+test data is 20% of loaded data
 
 """
-def loadData(path="../data/images/", dataSplit = [1,0.1,0.1]):
+def loadData(path="./data/images/", data_split = [0.8,1,1]):
 
     def shared(data):
         """Place the data into shared variables.  This allows Theano to copy
@@ -58,6 +60,10 @@ def loadData(path="../data/images/", dataSplit = [1,0.1,0.1]):
         image = skimage.io.imread(file)
         data = numpy.vstack((data, [image.flatten(), get_index(file)]))
 
+    data_split[0] = int(data.shape[0]*data_split[0])
+    data_split[1] = int(data.shape[0]*data_split[1])
+    data_split[2] = int(data.shape[0]*data_split[2])
+
     gc.collect()
     if len(data) == 0:
         raise Exception("There is problem loading the data from " + path)
@@ -66,11 +72,27 @@ def loadData(path="../data/images/", dataSplit = [1,0.1,0.1]):
     numpy.random.shuffle(data.tolist())
     data = numpy.transpose(data.tolist())
 
-    training_data = data
-    validation_data = data[0:data.shape[0]/10,:]
-    test_data = data = data[data.shape[0]/10:2*data.shape[0]/10,:]
+    training_data = data[:data_split[0],:]
+    validation_data = data[data_split[0]:data_split[1],:]
+    # test_data = data = data[data_split[1]:data_split[2],:]
     print "(debug) Number of training images: " + str(training_data.shape[0])
     print "(debug) Number of validation images: " + str(validation_data.shape[0])
-    print "(debug) Number of test images: " + str(test_data.shape[0])
+    # print "(debug) Number of test images: " + str(test_data.shape[0])
 
+    # return [shared(training_data), shared(validation_data), shared(test_data)]
+    return [shared(training_data), shared(validation_data), None]
+
+def load_data_mnist(filename="./data/mnist.pkl.gz"):
+    f = gzip.open(filename, 'rb')
+    training_data, validation_data, test_data = cPickle.load(f)
+    f.close()
+    def shared(data):
+        """Place the data into shared variables.  This allows Theano to copy
+        the data to the GPU, if one is available.
+        """
+        shared_x = theano.shared(
+            numpy.asarray(data[0], dtype=theano.config.floatX), borrow=True)
+        shared_y = theano.shared(
+            numpy.asarray(data[1], dtype=theano.config.floatX), borrow=True)
+        return shared_x, T.cast(shared_y, "int32")
     return [shared(training_data), shared(validation_data), shared(test_data)]
