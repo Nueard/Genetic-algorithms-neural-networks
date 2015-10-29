@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     print "... starting network training"
     start = time.time()
-    net.train(training_data, 400, mini_batch_size, 0.01,
+    net.train(training_data, 400, mini_batch_size, 0.05,
                 validation_data, test_data)
 
     end = time.time()
