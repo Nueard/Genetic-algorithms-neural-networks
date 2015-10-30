@@ -64,10 +64,10 @@ if __name__ == '__main__':
                           poolsize=(3, 3)),
                 # output ( 41 - 3 + 1 ) / 3 = 13
                 ConvPoolLayer(image_shape=(mini_batch_size, 40, 13, 13),
-                          filter_shape=(3, 40, 2, 2),
-                          poolsize=(1, 1)),
-                # output ( 13 - 2 + 1 ) / 1 = 12
-                FullyConnectedLayer(n_in=3*12*12, n_out=80, p_dropout=0.2),
+                          filter_shape=(10, 40, 2, 2),
+                          poolsize=(2, 2)),
+                # output ( 13 - 2 + 1 ) / 2 = 6
+                FullyConnectedLayer(n_in=10*6*6, n_out=80, p_dropout=0.2),
                 SoftmaxLayer(n_in=80, n_out=8, p_dropout=0.2)],
                 mini_batch_size)
 
