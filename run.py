@@ -56,16 +56,19 @@ if __name__ == '__main__':
 
     net = Network([
                 ConvPoolLayer(image_shape=(mini_batch_size, 3, 256, 256),
-                          filter_shape=(100, 3, 7, 7),
-                          poolsize=(5, 5)),
-                # output ( 256 - 7 + 1 ) / 5 = 50
-                ConvPoolLayer(image_shape=(mini_batch_size, 100, 50, 50),
+                          filter_shape=(100, 3, 11, 11),
+                          poolsize=(6, 6)),
+                # output ( 256 - 11 + 1 ) / 6 = 41
+                ConvPoolLayer(image_shape=(mini_batch_size, 100, 41, 41),
                           filter_shape=(40, 100, 3, 3),
-                          poolsize=(4, 4)),
-                # output ( 50 - 3 + 1 ) / 4 = 12
-                FullyConnectedLayer(n_in=40*12*12, n_out=1000, p_dropout=0.2),
-                FullyConnectedLayer(n_in=1000, n_out=100, p_dropout=0.2),
-                SoftmaxLayer(n_in=100, n_out=8, p_dropout=0.2)],
+                          poolsize=(3, 3)),
+                # output ( 41 - 3 + 1 ) / 3 = 13
+                ConvPoolLayer(image_shape=(mini_batch_size, 40, 13, 13),
+                          filter_shape=(3, 40, 2, 2),
+                          poolsize=(1, 1)),
+                # output ( 13 - 2 + 1 ) / 1 = 12
+                FullyConnectedLayer(n_in=3*12*12, n_out=80, p_dropout=0.2),
+                SoftmaxLayer(n_in=80, n_out=8, p_dropout=0.2)],
                 mini_batch_size)
 
     print "... loading data"

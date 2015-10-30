@@ -42,7 +42,7 @@ validation data is 20% of loaded data
 test data is 20% of loaded data
 
 """
-def loadData(path="./data/images/", data_split = [0.8,1,1]):
+def loadData(path="./data/images/", data_split = [0.8,0.9,1]):
 
     def shared(data):
         """Place the data into shared variables.  This allows Theano to copy
