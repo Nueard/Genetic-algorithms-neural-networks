@@ -1,7 +1,6 @@
 import theano.tensor as T
 import theano
 import numpy
-import time
 
 #### Main class used to construct and train networks
 def size(data):
@@ -32,18 +31,16 @@ class Network(object):
         self.layers[0].display_weights()
 
     def train(self, training_data, epochs, mini_batch_size, eta,
-            validation_data, test_data, lmbda=0.1):
+            validation_data, test_data, lmbda=0.0):
         """Train the network using mini-batch stochastic gradient descent."""
         training_x, training_y = training_data
         validation_x, validation_y = validation_data
-        if test_data is not None:
-            test_x, test_y = test_data
+        test_x, test_y = test_data
 
         # compute number of minibatches for training, validation and testing
         num_training_batches = size(training_data)/mini_batch_size
         num_validation_batches = size(validation_data)/mini_batch_size
-        if test_data is not None:
-            num_test_batches = size(test_data)/mini_batch_size
+        num_test_batches = size(test_data)/mini_batch_size
 
         # define the (regularized) cost function, symbolic gradients, and updates
         l2_norm_squared = sum([(layer.w**2).sum() for layer in self.layers])
@@ -72,48 +69,44 @@ class Network(object):
                 self.y:
                 validation_y[i*self.mini_batch_size: (i+1)*self.mini_batch_size]
             })
-        if test_data is not None:
-            test_mb_accuracy = theano.function(
-                [i], self.layers[-1].accuracy(self.y),
-                givens={
-                    self.x:
-                    test_x[i*self.mini_batch_size: (i+1)*self.mini_batch_size],
-                    self.y:
-                    test_y[i*self.mini_batch_size: (i+1)*self.mini_batch_size]
-                })
-            self.test_mb_predictions = theano.function(
-                [i], self.layers[-1].y_out,
-                givens={
-                    self.x:
-                    test_x[i*self.mini_batch_size: (i+1)*self.mini_batch_size]
-                })
+        test_mb_accuracy = theano.function(
+            [i], self.layers[-1].accuracy(self.y),
+            givens={
+                self.x:
+                test_x[i*self.mini_batch_size: (i+1)*self.mini_batch_size],
+                self.y:
+                test_y[i*self.mini_batch_size: (i+1)*self.mini_batch_size]
+            })
+        self.test_mb_predictions = theano.function(
+            [i], self.layers[-1].y_out,
+            givens={
+                self.x:
+                test_x[i*self.mini_batch_size: (i+1)*self.mini_batch_size]
+            })
         # Do the actual training
         best_validation_accuracy = 0.0
         best_iteration = 0
         test_accuracy = 0
         for epoch in xrange(epochs):
-            # start = time.time()
             for minibatch_index in xrange(num_training_batches):
                 iteration = num_training_batches*epoch+minibatch_index
                 # print("... training mini-batch number {0}".format(iteration))
                 cost_ij = train_mb(minibatch_index)
                 if (iteration+1) % num_training_batches == 0:
+                    print "... starting validation"
                     validation_accuracy = numpy.mean(
                         [validate_mb_accuracy(j) for j in xrange(num_validation_batches)])
-                    print("... epoch {0}: validation accuracy {1:.2%} - {2:.2%}".format(
-                        epoch, validation_accuracy, best_validation_accuracy))
+                    print("... epoch {0}: validation accuracy {1:.2%}".format(
+                        epoch, validation_accuracy))
                     if validation_accuracy >= best_validation_accuracy:
-                        # print("... this is the best validation accuracy to date.")
+                        print("... this is the best validation accuracy to date.")
                         best_validation_accuracy = validation_accuracy
                         best_iteration = iteration
-                        if test_data is not None:
+                        if test_data:
                             test_accuracy = numpy.mean(
                                 [test_mb_accuracy(j) for j in xrange(num_test_batches)])
                             print("... the corresponding test accuracy is {0:.2%}".format(
                                 test_accuracy))
-            # end = time.time()
-            # print "Training time elapsed: " + str(end - start) + " s"
-
         print("... finished training network.")
         print("... best validation accuracy of {0:.2%} obtained at iteration {1}".format(
             best_validation_accuracy, best_iteration))
