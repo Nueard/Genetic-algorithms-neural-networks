@@ -1,5 +1,2 @@
-# Compiled python files
-.pyc
-
-# Damn OSX
-.DS_Store
+.vscode
+*.pyc
