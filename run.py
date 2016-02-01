@@ -14,7 +14,7 @@ from NN.CifarLoader import load_data
 params = {
     "layers": [2,5],
     "batchSize": 100,
-    "maxEpochs": 1,
+    "maxEpochs": 10,
     "inputShape": [3,32,32],
     "output": 8,
     "data_split":[0.5, 0.75, 1]
@@ -72,8 +72,8 @@ definitions = {
 ga_params = {
     "maxGenerations": 10000,
     "threshold": 0.9,
-    "population": 2,
-    "crossover": 1,
+    "population": 10,
+    "crossover": 0.2,
     "mutation": 1
 }
 
@@ -153,6 +153,9 @@ def evaluate(layers):
     print("Individual fitness " + str(fitness))
     return fitness
 
+
+
+
 # CONFIG
 try: theano.config.device = 'gpu'
 except: pass
@@ -166,6 +169,10 @@ fns = {
     "mutate": mutate,
     "crossover": crossover
 }
+dump_file = "dump.obj"
+if len(sys.argv) > 1:
+    if sys.argv[1] == "resume" and len(sys.argv) == 3:
+        dump_file = sys.argv[2]
 
-ga = GAlg(ga_params, fns, "dump.obj")
+ga = GAlg(ga_params, fns, dump_file)
 ga.run()

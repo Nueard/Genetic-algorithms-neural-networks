@@ -1,9 +1,10 @@
 import random
+import sys
 import pickle
 import os.path
 
 class GAlg(object):
-    def __init__(self, params, fns, dump_file):
+    def __init__(self, params=None, fns=None, dump_file=None):
         """ Takes an dictionary of parameters 'params' and a dictionary of functions
             for evaluation, mutation, crossover and population (a.k.a. generation)
 
@@ -28,6 +29,7 @@ class GAlg(object):
                 self.dump_file = dump_file
                 self.params = data["params"]
                 self.generation = data["generation"]
+                self.previousGenerations = data["previousGenerations"]
                 self.fns = data["fns"]
         else:
             self.dump_file = dump_file
@@ -35,32 +37,39 @@ class GAlg(object):
             self.params["generations"] = 0
             self.fns = fns
             self.generation = []
+            self.previousGenerations = []
 
     def run(self):
         self.populate()
         for i in range(0, self.params["maxGenerations"]):
-            self.evaluate()
-            self.sort()
-            print ("best individual in generation " + str(self.params["generations"]) + " has fitness of " + str(self.generation[0]["fitness"]))
-            self.drop()
-            self.crossover()
-            self.populate()
-            self.params["generations"] += 1
-            self.saveProgress()
-            if self.generation[0]["fitness"] >= self.params["threshold"]:
-                print ("target threshold reached in " + str(i) + " generations")
-                print ("best fitness " + str(self.generation[0]["fitness"]))
-                print ("best individual \n" + str(self.generation[0]["individual"]))
-                break
+            try:
+                self.previousGenerations.append(self.generation)
+                self.evaluate()
+                self.sort()
+                print ("best individual in generation " + str(self.params["generations"]) + " has fitness of " + str(self.generation[0]["fitness"]))
+                self.drop()
+                self.crossover()
+                self.populate()
+                self.params["generations"] += 1
+                self.saveProgress()
+                if self.generation[0]["fitness"] >= self.params["threshold"]:
+                    print ("target threshold reached in " + str(i) + " generations")
+                    print ("best fitness " + str(self.generation[0]["fitness"]))
+                    print ("best individual \n" + str(self.generation[0]["individual"]))
+                    break
+            except KeyboardInterrupt:
+                print("Interrupted")
+                sys.exit()
 
     def evaluate(self):
         print("Evaluating generation")
-        for i in range(0,self.params["population"]):
-            try:
-                fitness = self.fns["evaluate"](self.generation[i]["individual"])
-                self.generation[i]["fitness"] = fitness
-            except:
-                print("Exception while evaluating individual, skipping")
+        for i in range(0,len(self.generation)):
+            if self.generation[i]["fitness"] == -1:
+                try:
+                    fitness = self.fns["evaluate"](self.generation[i]["individual"])
+                    self.generation[i]["fitness"] = fitness
+                except:
+                    print("Exception while evaluating individual, skipping")
 
     def sort(self):
         def getKey(item):
@@ -79,11 +88,11 @@ class GAlg(object):
                 one, two = self.fns["crossover"](self.generation[i]["individual"],self.generation[i+1]["individual"])
                 individual_one = {
                     "individual": one,
-                    "fitness": 0
+                    "fitness": -1
                 }
                 individual_two = {
                     "individual": two,
-                    "fitness":0
+                    "fitness": -1
                 }
                 individual_one = self.mutate(individual_one)
                 individual_two = self.mutate(individual_two)
@@ -108,7 +117,7 @@ class GAlg(object):
         for i in range(len(self.generation), self.params["population"]):
             individual = {}
             individual["individual"] = self.fns["generate"]()
-            individual["fitness"] = 0
+            individual["fitness"] = -1
             self.generation.append(individual)
 
     def getBest(self):
@@ -118,7 +127,8 @@ class GAlg(object):
         data = {
             "fns": self.fns,
             "generation": self.generation,
-            "params": self.params
+            "params": self.params,
+            "previousGenerations": self.previousGenerations
         }
         with open(self.dump_file, 'wb') as handle:
             pickle.dump(data, handle)
