@@ -62,12 +62,15 @@ class GAlg(object):
                 sys.exit()
 
     def evaluate(self):
-        print("Evaluating generation")
+        print("Evaluating generation "+str(len(self.previousGenerations)))
         for i in range(0,len(self.generation)):
             if self.generation[i]["fitness"] == -1:
                 try:
                     fitness = self.fns["evaluate"](self.generation[i]["individual"])
                     self.generation[i]["fitness"] = fitness
+                except KeyboardInterrupt:
+                    print("Interrupted")
+                    sys.exit()
                 except:
                     print("Exception while evaluating individual, skipping")
 
@@ -99,6 +102,9 @@ class GAlg(object):
                 self.generation.append(individual_one)
                 self.generation.append(individual_two)
                 i+=1
+            except KeyboardInterrupt:
+                print("Interrupted")
+                sys.exit()
             except:
                 print("Exception while mating individuals, skipping")
 
@@ -109,6 +115,9 @@ class GAlg(object):
             if rng < self.params["mutation"]:
                 try:
                     self.generation[i]["individual"] = self.fns["mutate"](self.generation[i]["individual"])
+                except KeyboardInterrupt:
+                    print("Interrupted")
+                    sys.exit()
                 except:
                     print("Exception while mutating individual, skipping")
 
