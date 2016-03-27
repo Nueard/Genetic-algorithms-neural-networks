@@ -46,10 +46,10 @@ class GAlg(object):
         self.populate()
         for i in range(0, self.params["maxGenerations"]):
             try:
-                self.previousGenerations.append(self.generation)
                 self.evaluate()
                 self.sort()
                 print ("best individual in generation " + str(self.params["generations"]) + " has fitness of " + str(self.fns["getFitness"](self.generation[0]["fitness"])))
+                self.previousGenerations.append(self.generation)
                 self.saveProgress()
                 self.drop()
                 self.crossover()
@@ -104,25 +104,12 @@ class GAlg(object):
             self.generation.append(individual_one)
             self.generation.append(individual_two)
             i+=1
-            # except KeyboardInterrupt:
-            #     print("Interrupted")
-            #     sys.exit()
-            # except Exception as e:
-            #     print("Error while mating")
-            #     print(e)
 
     def mutate(self, ind):
         # print("Trying to mutate")
         rng = random.random()
         if rng < self.params["mutation"]:
-            # try:
             ind = self.fns["mutate"](ind)
-            # except KeyboardInterrupt:
-            #     print("Interrupted")
-            #     sys.exit()
-            # except Exception as e:
-            #     print("Error while mutating")
-            #     print(e)
         return ind
 
     def populate(self):

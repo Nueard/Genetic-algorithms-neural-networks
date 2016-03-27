@@ -44,8 +44,11 @@ parameters["nn"] = {
     }
 }
 
+def processData(generations):
+    print(len(generations))
+
 # initialise GANN framework
-g = GANN(parameters, load_data, 'test.obj')
+g = GANN(parameters, load_data, 'test.obj', processData)
 
 # run
 g.run()

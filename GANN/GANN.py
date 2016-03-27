@@ -11,7 +11,7 @@ from NN.Layers.FullyConnected import FullyConnectedLayer
 from NN.Layers.Softmax import SoftmaxLayer
 
 class GANN(object):
-    def __init__(self, parameters, load_data, dump_file=None):
+    def __init__(self, parameters, load_data, dump_file, processData):
         params = parameters["nn"]["params"]
         definitions = parameters["nn"]["definitions"]
         ga_params = parameters["ga"]
@@ -184,7 +184,8 @@ class GANN(object):
             "evaluateBest": evaluateBest,
             "mutate": mutate,
             "crossover": crossover,
-            "getFitness": getFitness
+            "getFitness": getFitness,
+            "processData": processData
         }
 
         try: theano.config.device = 'gpu'
@@ -200,7 +201,6 @@ class GANN(object):
 
         self.ga = GAlg(ga_params, fns, dump_file)
 
-
-
     def run(self):
         self.ga.run()
+        self.ga.processData()

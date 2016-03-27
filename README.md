@@ -99,9 +99,16 @@ There are several 'load_data' functions provided for the MNIST, CIFAR and larger
 from NN.CIFARLoader import load_data # CIFAR
 from NN.DataLoader import load_data # Larger images
 from NN.MNISTLoader import load_data # MNIST
+```
+There is one more thing we need to define and this is the callback function which will provide us with the obtained data after the GANN has completed its run.
+The parameter passed to the function are all generations with all individuals in them.
+```
+def processData(generations):
+    # do whatever you want to the array
+    print(len(generations))
 
 # initialise GANN framework
-g = GANN(parameters, load_data, 'test.obj')
+g = GANN(parameters, load_data, 'test.obj', processData)
 ```
 
 After initialising the GANN framework we need to run it by
@@ -109,3 +116,6 @@ After initialising the GANN framework we need to run it by
 ```
 ga.run()
 ```
+
+The output file contains the parameters and generations of the current run. To continue a paused run initialise the GANN framework with an already existing file and it will load it automatically.
+Once the genetic algorithm is completed it will call the callback function we defined as 'parseData(generations)'
