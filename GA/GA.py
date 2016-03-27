@@ -2,6 +2,8 @@ import random
 import sys
 import pickle
 import os.path
+import matplotlib.pyplot as plt
+import numpy
 
 class GAlg(object):
     def __init__(self, params=None, fns=None, dump_file=None):
@@ -27,10 +29,11 @@ class GAlg(object):
             with open(dump_file, 'rb') as handle:
                 data = pickle.load(handle)
                 self.dump_file = dump_file
-                self.params = data["params"]
+                self.params = params
+                self.params["generations"] = len(data["previousGenerations"])
                 self.generation = data["generation"]
                 self.previousGenerations = data["previousGenerations"]
-                self.fns = data["fns"]
+                self.fns = fns
         else:
             self.dump_file = dump_file
             self.params = params
@@ -46,13 +49,13 @@ class GAlg(object):
                 self.previousGenerations.append(self.generation)
                 self.evaluate()
                 self.sort()
-                print ("best individual in generation " + str(self.params["generations"]) + " has fitness of " + str(self.generation[0]["fitness"]))
+                print ("best individual in generation " + str(self.params["generations"]) + " has fitness of " + str(self.fns["getFitness"](self.generation[0]["fitness"])))
+                self.saveProgress()
                 self.drop()
                 self.crossover()
                 self.populate()
                 self.params["generations"] += 1
-                self.saveProgress()
-                if self.generation[0]["fitness"] >= self.params["threshold"]:
+                if self.fns["getFitness"](self.generation[0]["fitness"]) >= self.params["threshold"]:
                     print ("target threshold reached in " + str(i) + " generations")
                     print ("best fitness " + str(self.generation[0]["fitness"]))
                     print ("best individual \n" + str(self.generation[0]["individual"]))
@@ -64,19 +67,20 @@ class GAlg(object):
     def evaluate(self):
         print("Evaluating generation "+str(len(self.previousGenerations)))
         for i in range(0,len(self.generation)):
-            if self.generation[i]["fitness"] == -1:
-                try:
-                    fitness = self.fns["evaluate"](self.generation[i]["individual"])
-                    self.generation[i]["fitness"] = fitness
-                except KeyboardInterrupt:
-                    print("Interrupted")
-                    sys.exit()
-                except:
-                    print("Exception while evaluating individual, skipping")
+            if len(self.generation) <= i:
+                break
+            if self.generation[i]["fitness"] is None:
+                fitness = self.fns["evaluate"](self.generation[i]["individual"])
+                self.generation[i]["fitness"] = fitness
+                if numpy.max(fitness) == -1:
+                    del self.generation[i]
+                    i-=1
+                else:
+                    print("individual fitness " + str(self.fns['getFitness'](self.generation[i]["fitness"])))
 
     def sort(self):
         def getKey(item):
-            return item["fitness"]
+            return self.fns["getFitness"](item["fitness"])
 
         self.generation = sorted(self.generation, key=getKey, reverse=True)
 
@@ -87,46 +91,46 @@ class GAlg(object):
     def crossover(self):
         print("Mating top " + str(self.params["crossover"]*100) + " % of the population")
         for i in range(0, len(self.generation)-1):
-            try:
-                one, two = self.fns["crossover"](self.generation[i]["individual"],self.generation[i+1]["individual"])
-                individual_one = {
-                    "individual": one,
-                    "fitness": -1
-                }
-                individual_two = {
-                    "individual": two,
-                    "fitness": -1
-                }
-                individual_one = self.mutate(individual_one)
-                individual_two = self.mutate(individual_two)
-                self.generation.append(individual_one)
-                self.generation.append(individual_two)
-                i+=1
-            except KeyboardInterrupt:
-                print("Interrupted")
-                sys.exit()
-            except:
-                print("Exception while mating individuals, skipping")
+            # try:
+            one, two = self.fns["crossover"](self.generation[i]["individual"],self.generation[i+1]["individual"])
+            individual_one = {
+                "individual": self.mutate(one),
+                "fitness": None
+            }
+            individual_two = {
+                "individual": self.mutate(two),
+                "fitness": None
+            }
+            self.generation.append(individual_one)
+            self.generation.append(individual_two)
+            i+=1
+            # except KeyboardInterrupt:
+            #     print("Interrupted")
+            #     sys.exit()
+            # except Exception as e:
+            #     print("Error while mating")
+            #     print(e)
 
-    def mutate(self):
-        print("Trying to mutate")
-        for i in range(0, len(self.generation)):
-            rng = random.random()
-            if rng < self.params["mutation"]:
-                try:
-                    self.generation[i]["individual"] = self.fns["mutate"](self.generation[i]["individual"])
-                except KeyboardInterrupt:
-                    print("Interrupted")
-                    sys.exit()
-                except:
-                    print("Exception while mutating individual, skipping")
+    def mutate(self, ind):
+        # print("Trying to mutate")
+        rng = random.random()
+        if rng < self.params["mutation"]:
+            # try:
+            ind = self.fns["mutate"](ind)
+            # except KeyboardInterrupt:
+            #     print("Interrupted")
+            #     sys.exit()
+            # except Exception as e:
+            #     print("Error while mutating")
+            #     print(e)
+        return ind
 
     def populate(self):
         print("Creating a new generation with " + str(self.params["population"]) + " individuals")
         for i in range(len(self.generation), self.params["population"]):
             individual = {}
             individual["individual"] = self.fns["generate"]()
-            individual["fitness"] = -1
+            individual["fitness"] = None
             self.generation.append(individual)
 
     def getBest(self):
@@ -141,3 +145,17 @@ class GAlg(object):
         }
         with open(self.dump_file, 'wb') as handle:
             pickle.dump(data, handle)
+
+    def showBest(self):
+        print(self.generation[0]["individual"])
+        print(self.generation[0]["fitness"])
+
+    def keepFirst(self, index):
+        self.previousGenerations = self.previousGenerations[:index]
+        self.saveProgress()
+
+    def evaluateBest(self):
+        self.fns["evaluateBest"](self.previousGenerations[-1][0])
+
+    def processData(self):
+        self.fns["processData"](self.previousGenerations)

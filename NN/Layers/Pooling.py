@@ -1,5 +1,6 @@
 from theano.tensor.nnet import sigmoid
-from theano.tensor.signal import pool
+# from theano.tensor.signal import pool
+from theano.tensor.signal import downsample
 from theano.tensor.nnet import conv
 
 import theano
@@ -34,9 +35,10 @@ class PoolingLayer(object):
 
     def set_inpt(self, inpt, inpt_dropout, mini_batch_size):
         self.inpt = inpt.reshape(self.image_shape)
-        self.output = pool.pool_2d(
+        self.output = downsample.max_pool_2d(
+        # self.output = pool.pool_2d(
             input=self.inpt, ds=self.poolsize, ignore_border=True)
-        self.output_dropout = self.output # no dropout in the convolutional layers
+        self.output_dropout = self.output
 
     def get_output_shape(self):
         size = int(self.image_shape[2]/self.poolsize[0])

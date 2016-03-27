@@ -46,9 +46,13 @@ class ConvolutionalLayer(object):
 
     def set_inpt(self, inpt, inpt_dropout, mini_batch_size):
         self.inpt = inpt.reshape(self.image_shape)
+        k = self.filter_shape[2]-1
+        m = self.image_shape[2]
         conv_out = conv.conv2d(
             input=self.inpt, filters=self.w, filter_shape=self.filter_shape,
-            image_shape=self.image_shape)
+            image_shape=self.image_shape, border_mode="full")
+        # simulate border mode same
+        conv_out = conv_out[:,:,k:k+m,k:k+m]
         self.output = self.activation_fn(
             conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
         self.output_dropout = self.output # no dropout in the convolutional layers
@@ -62,5 +66,5 @@ class ConvolutionalLayer(object):
           return True
 
     def get_output_shape(self):
-          size = self.image_shape[2]-self.filter_shape[2]+1
+          size = self.image_shape[2]
           return [self.filter_shape[0], size, size]

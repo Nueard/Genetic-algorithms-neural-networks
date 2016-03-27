@@ -26,12 +26,15 @@ class NNet(object):
                 prev_layer.output, prev_layer.output_dropout, self.mini_batch_size)
         self.output = self.layers[-1].output
         self.output_dropout = self.layers[-1].output_dropout
+        self.validation_accuracies = []
+        self.test_accuracies = []
+        self.confusion_matrix = numpy.zeros((self.layers[-1].n_out,self.layers[-1].n_out))
 
     def display_weights(self):
         self.layers[0].display_weights()
 
     def train(self, training_data, epochs, mini_batch_size, eta,
-            validation_data, test_data, lmbda=0.0):
+            validation_data, test_data, lmbda=0.0, momentum=0.9):
         """Train the network using mini-batch stochastic gradient descent."""
         training_x, training_y = training_data
         validation_x, validation_y = validation_data
@@ -87,19 +90,38 @@ class NNet(object):
         best_validation_accuracy = 0.0
         best_iteration = 0
         test_accuracy = 0
+        # train
+        confusion_matrix = numpy.zeros((self.layers[-1].n_out,self.layers[-1].n_out))
         for epoch in range(epochs):
+            # train
             for minibatch_index in range(num_training_batches):
-                iteration = num_training_batches*epoch+minibatch_index
-                # print("... training mini-batch number {0}".format(iteration))
                 cost_ij = train_mb(minibatch_index)
-                if (iteration+1) % num_training_batches == 0:
-                    validation_accuracy = numpy.mean(
-                        [validate_mb_accuracy(j) for j in range(num_validation_batches)])
-                    if validation_accuracy >= best_validation_accuracy:
-                        best_validation_accuracy = validation_accuracy
-                        best_iteration = iteration
-                        if test_data:
-                            test_accuracy = numpy.mean(
-                                [test_mb_accuracy(j) for j in range(num_test_batches)])
 
-        return best_validation_accuracy
+            # validate
+            accuracies = []
+            for j in range(num_validation_batches):
+                expected_output, output = validate_mb_accuracy(j)
+                accuracies.append(numpy.mean(numpy.equal(expected_output, output)))
+            validation_accuracy = numpy.mean(accuracies)
+            self.validation_accuracies.append(validation_accuracy)
+            print(str(epoch) + " " + str(validation_accuracy))
+
+            # test
+            mb_test_accuracy = []
+            tests = 0
+            confusion_matrix = numpy.zeros((self.layers[-1].n_out,self.layers[-1].n_out))
+            for j in range(num_test_batches):
+                expected_output, output = test_mb_accuracy(j)
+                tests += len(output)
+                for k in range(len(output)):
+                    confusion_matrix[expected_output[k],output[k]] += 1
+
+                mb_test_accuracy.append(numpy.mean(numpy.equal(expected_output, output)))
+            self.test_accuracies.append(numpy.mean(mb_test_accuracy))
+
+        confusion_matrix = confusion_matrix.T
+        numpy.savetxt('confusion.txt', confusion_matrix, delimiter=",")
+
+
+
+        return [self.validation_accuracies, self.test_accuracies]

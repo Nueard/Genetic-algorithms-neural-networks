@@ -5,8 +5,11 @@ from theano.tensor.nnet import softmax
 from theano.tensor import shared_randomstreams
 
 class SoftmaxLayer(object):
-
     def __init__(self, n_in, n_out, p_dropout=0.0):
+        '''
+            n_in is the number of inputs the fully connected layer will take,
+            while n_out is the number of neurons the layer will have
+        '''
         self.n_in = n_in
         self.n_out = n_out
         self.p_dropout = p_dropout
@@ -33,7 +36,7 @@ class SoftmaxLayer(object):
 
     def accuracy(self, y):
         "Return the accuracy for the mini-batch."
-        return T.mean(T.eq(y, self.y_out))
+        return y, self.y_out
 
     def validate(self):
         return True

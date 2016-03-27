@@ -15,7 +15,7 @@ def load_data(path="./data/sample/", data_split = [0.8,0.9,1]):
         return dict
 
     def shared(data):
-        """Place the data into shared variables.  This allows Theano to copy
+        """ Place the data into shared variables.  This allows Theano to copy
         the data to the GPU, if one is available.
         """
         shared_x = theano.shared(numpy.asarray(data["data"].tolist(), dtype=theano.config.floatX), borrow=True)

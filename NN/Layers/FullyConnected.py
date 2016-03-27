@@ -6,7 +6,11 @@ from theano.tensor import shared_randomstreams
 
 class FullyConnectedLayer(object):
 
-    def __init__(self, n_in, n_out, p_dropout, activation_fn=sigmoid):
+    def __init__(self, n_in, n_out, p_dropout=0, activation_fn=sigmoid):
+        '''
+            n_in is the number of inputs the fully connected layer will take,
+            while n_out is the number of neurons the layer will have
+        '''
         self.n_in = n_in
         self.n_out = n_out
         self.activation_fn = activation_fn

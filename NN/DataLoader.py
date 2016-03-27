@@ -25,27 +25,11 @@ def get_index(file):
     print ("... index not found")
     return -1
 
-""" Loads the test data in the specified directory. Reads all the files there
-and organizes them in 2d array where
-image_n = return[n,0]
-category_of_image_n = return[n,1]
-
-:type path: string
-:param path: Filepath of folder with data e.g. /data/images/
-
-:type dataSplit: array[int]
-:param dataSplit: Array of floats 0..1 which represents fractions for training,
-validation and test data. Example [0.9,0.05,0.05]
-training data is 90% of loaded data
-validation data is 5% of loaded data
-test data is 5% of loaded data
-
-"""
-def load_data(path="./data/sample/", data_split = [0.8,0.9,1]):
+def load_data(path="./data/images/", data_split = [0.8,0.9,1]):
     print ("... loading data")
 
     def shared(data):
-        """Place the data into shared variables.  This allows Theano to copy
+        """ Place the data into shared variables. This allows Theano to copy
         the data to the GPU, if one is available.
         """
         shared_x = theano.shared(numpy.asarray(data[:,0].tolist(), dtype=theano.config.floatX), borrow=True)
@@ -54,7 +38,6 @@ def load_data(path="./data/sample/", data_split = [0.8,0.9,1]):
 
 
     data = numpy.ndarray((0,2))
-    # data = numpy.empty([0,2], dtype=theano.config.floatX)
     for index,file in enumerate(glob.glob(path+"*.jpg")):
         image = skimage.io.imread(file)
         data = numpy.vstack((data, [image.flatten().tolist(), get_index(file)]))
