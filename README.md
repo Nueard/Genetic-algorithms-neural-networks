@@ -1,4 +1,4 @@
-# IPL4
+# GANN
 Genetic algorithm with neural networks frameworks developed for my level 4 individual project.
 
 # Installation instructions
